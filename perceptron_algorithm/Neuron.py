@@ -1,17 +1,12 @@
-import random
-
-
+# from feature_extraction.Vocabulary import vectorized_emails
 class Neuron:
-    def __init__(self, input, id, weight=random.uniform(0.1, 0.3), output=None, is_activated=None):
+    def __init__(self, id, weight, bias=0, output=None, mail_input=None, is_activated=None):
         # Pierwsza wagi będą inicjowane losowo, jeżeli jesteśmy jużw innej warstwie niż pierwszej to będą zmieniane
         self.weight = weight
-        self.input = input
+        self.input = mail_input
         self.id = id
-        # suma elementów przez długość listy - pierwszy sposób obliczania biasu
-        # lambda zwraca true jeżeli x != 0
-        f = lambda x: x != -1
-        self.bias = sum(filter(f, self.input)) / len(list(filter(f, self.input)))
-
+        # suma elementów i wagi przez długość listy - pierwszy sposób obliczania biasu
+        self.bias = bias
         self.output = output
         self.is_activated = is_activated
 
@@ -25,35 +20,16 @@ class Neuron:
         # suma wazona ustawiamy na 0
         weighted_sum = 0.0 + self.weight
 
+        # iteruje po liczbach w mailu
         for x in self.input:
+            if x == -1:
+                break
             weighted_sum += x * self.weight
-        self.output = weighted_sum - self.bias
+
+        self.output = (weighted_sum - self.bias)
         # kalkulujemy czy aktywujemy neuron
         self.is_activated = self.activation_func(output=self.output)
         if self.is_activated:
             return self.output
         else:
             return 0
-
-
-
-"""#1,1,0,1,1,0,1,1,0
-#1,0,0,0,1,0,1,1,0
-vect = [
-    [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1],
-    [1, 1],
-    [1, 1, 1],
-    [1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1],
-    [1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
-
-layer = {}
-for i in range(len(vect)):
-    n = Neuron(input=vect[i], id=i)
-    layer[n.id] = n.weighted_sum()
-print(layer)
-"""
