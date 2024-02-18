@@ -1,4 +1,6 @@
+import itertools
 # from feature_extraction.Vocabulary import vectorized_emails
+
 class Neuron:
     def __init__(self, id, weight, bias=0, output=None, mail_input=None, is_activated=None):
         # Pierwsza wagi będą inicjowane losowo, jeżeli jesteśmy jużw innej warstwie niż pierwszej to będą zmieniane
@@ -10,26 +12,11 @@ class Neuron:
         self.output = output
         self.is_activated = is_activated
 
-    def activation_func(self, output):
-        if output > 1:
-            return True
-        else:
-            return False
+    def activation_func(self, output: float) -> bool:
+        return output > 1
 
-    def weighted_sum(self):
-        # suma wazona ustawiamy na 0
-        weighted_sum = 0.0 + self.weight
-
-        # iteruje po liczbach w mailu
-        for x in self.input:
-            if x == -1:
-                break
-            weighted_sum += x * self.weight
-
-        self.output = (weighted_sum - self.bias)
-        # kalkulujemy czy aktywujemy neuron
-        self.is_activated = self.activation_func(output=self.output)
-        if self.is_activated:
-            return self.output
-        else:
-            return 0
+    def weighted_sum(self) -> float:
+        input_values = itertools.takewhile(lambda x: x != -1, self.input)
+        weighted_sum = self.weight + sum(x * self.weight for x in input_values)
+        self.output = weighted_sum - self.bias
+        return self.output if self.activation_func(self.output) else 0
