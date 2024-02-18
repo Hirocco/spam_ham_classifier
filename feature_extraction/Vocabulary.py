@@ -3,7 +3,7 @@ import sys
 sys.path.append('C:/Users/Kamil/Desktop/spam_ham_ai/data_preparation')
 
 from data_preparation.data_preprocessing import Train_set, Test_set
-
+from data_preparation.data_loading import data_classes
 
 def build_vocabulary(train_set: list[list[str]]):
     vocabulary = {}
@@ -40,16 +40,24 @@ def standaryzowanie_wektoru(vectorized_emails : list[list[int]]):
 
     return vectorized_emails
 
+def set_label(data_classes):
+    label_list = []
+    for label in data_classes:
+        if label == "spam":
+            label_list.append(0)
+        else:
+            label_list.append(1)
+    return label_list
 
 vocabulary = build_vocabulary(Train_set)
 vectorized_emails = standaryzowanie_wektoru(vectorize_emails(vocabulary, Train_set))
 vectorized_test_emails = vectorize_emails(vocabulary, Test_set)
 num_of_initial_neurons = len(vectorized_emails[0])
+label_list = set_label(data_classes=data_classes)
 
 
-#print(num_of_initial_neurons)
 """dziala
-print("vect:" , vectorized_emails[0])
+print("vect:" , vectorized_emails[2])
 print("mail: ", Train_set[0])
 print("Vocabulary: ", vocabulary)
 """
