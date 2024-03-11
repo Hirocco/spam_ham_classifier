@@ -5,6 +5,8 @@ Design of a neural network without the use of libraries (scikit - dataset divisi
 ## Python Libraries
 
 - **scikit-learn**: scikit-learn is a machine learning library that provides simple and efficient tools for data mining and data analysis. (Just for splitting dataset)
+- **pandas**
+- **numpy**
 
 ## Data Preprocessing and Loading
 
@@ -21,7 +23,7 @@ Design of a neural network without the use of libraries (scikit - dataset divisi
 To use these libraries and packages in your project, it's recommended to set up a Python environment using tools like `virtualenv` or `conda`. You can install the required dependencies using the following command:
 
 ```
-pip install scikit-learn
+pip install requirements.txt
 ```
 
 You should also include the custom modules provided in your project directory.
