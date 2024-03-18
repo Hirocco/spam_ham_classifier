@@ -1,6 +1,7 @@
 ## About
 
 Design of a neural network without the use of libraries (scikit - dataset division, nltk - text lemmatization) to classify spam.
+Also there is a design using libraries. Whole point is to test if I can beat libraries with my own aglorithms - or at least improve my understanding of ML concept.
 
 ## Python Libraries
 
