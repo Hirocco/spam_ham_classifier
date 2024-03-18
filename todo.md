@@ -5,6 +5,7 @@
   Opracować zapisywanie ustawień modelu 
   Opracować jakieś UI z wprowadzaniem maili 
   Poprawić kalkulacje strat
+  Dopasować czy spam to 1 czy 0 bo sie pogubilem XDXDXD
 ```
 
 ## TODO 2 

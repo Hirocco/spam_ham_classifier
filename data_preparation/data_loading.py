@@ -12,6 +12,7 @@ def load_data(filepath):
                 print("Value error at line: ", line)
     return keys, values
 
-
+desktop = "C:/Users/Kamil/Desktop/spam_ham_ai/data_preparation/spam_or_ham.csv"
+laptop = "C:/Users/USER/Desktop/spam_ham_classifier/data_preparation/spam_or_ham.csv"
 data_classes: list[str]
-data_classes, data_content = load_data("C:/Users/Kamil/Desktop/spam_ham_ai/data_preparation/spam_or_ham.csv")
+data_classes, data_content = load_data(laptop)

@@ -38,15 +38,20 @@ def standaryzowanie_wektoru(vectorized_emails : list[list[int]]):
         while(len(mail) != max_len):
             mail.append(-1)
 
+    # TODO: dodac filtr pustych maili, tj. gdy lista sklada sie z samych -1 to znaczy ze jest niepotrzebna
+    for mail in vectorized_emails:
+        if set(mail) == {-1}:
+            vectorized_emails.remove(mail)
+
     return vectorized_emails
 
 def set_label(data_classes):
     label_list = []
     for label in data_classes:
         if label == "spam":
-            label_list.append(0)
-        else:
             label_list.append(1)
+        else:
+            label_list.append(0)
     return label_list
 
 vocabulary = build_vocabulary(Train_set)
@@ -55,7 +60,7 @@ vectorized_test_emails = vectorize_emails(vocabulary, Test_set)
 num_of_initial_neurons = len(vectorized_emails[0])
 label_list = set_label(data_classes=data_classes)
 
-
+#print(vectorized_emails)
 """dziala
 print("vect:" , vectorized_emails[2])
 print("mail: ", Train_set[0])
