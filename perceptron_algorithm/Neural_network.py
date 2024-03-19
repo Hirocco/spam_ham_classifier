@@ -4,8 +4,10 @@ import random
 
 
 # Todo:
-#  - Każdy neuron dostaje jedną i tą samą liste na początek, potem następne warstwy dostają wyniki poprzedniej na zasadzie każdy do każdego
 #  - zbieranie danych warstwy poprzedniej
+#  - poprawić działanie kalkulacji błędu
+#  - przesiewanie sieci,
+#  - trenowanie i aktualizacjia wag/biasów w oparciu o szukanie najmniejszego błędu (wyprowadzenie na kartce)
 
 
 class NeuralNetwork:
@@ -18,15 +20,27 @@ class NeuralNetwork:
         self.input_layer = {}
         self.hidden_layers = {}
         self.predictions = predictions
+        self.network_loss = {}
 
-    # TODO - dodać kalkulacje straty na każdej warstwie - porównać z gotowymi klasami
-    def hinge_loss(self, prediction: int, layer_output):
-        return max(0, abs(prediction - layer_output / 10))  # dzielimy przez 10 by uzyskać wartości z przedziału [0;1]
+    # output = 1 prediction = 0 suma_wazona = 2.130215165708253, waga = 0,23812004459646455, teta = 0.5
+    # blad = -0.25362346512925716287024027846558
+    # jak ten bład interpretować ?
+
+    # ouput = 1 , pred = 0 , suma_wazona = 2.130215165708253, waga = 0,23812004459646455, teta = 0.5
+    # blad = -0.25362346512925716287024027846558
+
+    # bierzemy wartosc absolutna by ustandaryzowac kwestie bledu
+    # pred = 0 output = 0 blad = 0.0
+
+
+    def calculate_loss(self, prediction: int, layer_output: int,
+                       neuron_weight: float, neuron_weighted_sum: float):
+        teta = 0.5
+        return teta * abs(prediction - layer_output) * neuron_weight * neuron_weighted_sum
 
     def create_input_layer(self) -> dict:  # Zwraca { id neuronu : wartość neuronu}
         # Tworzenie warstwy neuronów
         layer_loss = {}
-        input_layer = {}
         list_of_neurons = []
         # tworzenie warstwy (89 neuronów)
         for i in range(self.num_of_neurons):
@@ -36,6 +50,7 @@ class NeuralNetwork:
 
         for neuron in list_of_neurons:
             list_of_outputs = []
+            loss = []
             for i, input_data in enumerate(self.input):
                 neuron.input = input_data
                 neuron.bias = ((neuron.weight + sum(filter(lambda x: x != -1, input_data))) /
@@ -43,26 +58,29 @@ class NeuralNetwork:
                 # zaokrąglenie do 1 liczby po przecinku w celu ułatwienia debugowania
                 neuron_output = 1 if round(neuron.weighted_sum(), 1) > 0.51 else 0
                 list_of_outputs.append(neuron_output)
-                loss = self.hinge_loss(prediction=self.predictions[i], layer_output=neuron_output)
-                layer_loss[i] = loss  # Użyj indeksu i jako klucza dla layer_loss
-            input_layer[neuron.id] = list_of_outputs
+                single_loss = self.calculate_loss(prediction=self.predictions[i], layer_output=neuron_output,
+                                                  neuron_weight=neuron.weight,
+                                                  neuron_weighted_sum=neuron.weighted_sum())
+                # single_loss = self.hinge_loss(prediction=self.predictions[i], layer_output=neuron_output)
+                loss.append(single_loss)  # Użyj indeksu i jako klucza dla layer_loss
+            self.input_layer[neuron.id] = list_of_outputs
+            layer_loss[neuron.id] = loss
 
-        self.input_layer = input_layer  # przypisanie słownika z wynikami pierwszej warstwy
-        print("loss: ", layer_loss)
-        return input_layer
+        #print("loss: ", layer_loss.get(0))
+        self.network_loss = layer_loss
+        return self.input_layer
 
     def create_hidden_layers(self) -> dict:
         num_of_neurons = 0
-        # TODO: musi byc tu trenowanie az osiagniemy wynik, also ten syf jebany ponizej dziala na nieznajomych zasadach XDXDXD
         for neuron_id, neuron_output in self.input_layer.items():
             if set(neuron_output) == set(self.predictions):
                 self.hidden_layers[neuron_id] = neuron_output
                 num_of_neurons += 1
-
         """
         print(first_hidden_layer)
         print(num_of_neurons)
         """
+        return self.hidden_layers
 
     def check_results(self):
         count_total_input = len(self.input)
@@ -73,7 +91,7 @@ class NeuralNetwork:
             for otp, label in zip(neuron_output, label_list):
                 if otp == label:
                     count_good_guesses += 1
-            total.append(count_good_guesses/count_total_input)
+            total.append(count_good_guesses / count_total_input)
             count_good_guesses = 0
         return sum(total) / len(total)
 
@@ -98,4 +116,9 @@ network = NeuralNetwork(predictions=label_list, vectorized_mails_input=vectorize
 input_layer = network.create_input_layer()
 # print(input_layer)
 network.create_hidden_layers()
-print("Accuracy: ", round(network.check_results()*100,2), "%")
+result = round(network.check_results() * 100, 2)
+print("Average accuracy: ", result, "%")
+print("Average error: ", 100 - result, "%")
+
+"""for value in network.network_loss.get(0):
+    print(value)"""
