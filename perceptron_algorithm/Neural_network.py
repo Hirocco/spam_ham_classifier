@@ -3,7 +3,6 @@ from feature_extraction.Vocabulary import num_of_initial_neurons, vectorized_ema
 import random
 import time
 
-
 # TODO:
 #  - trenowanie i aktualizacjia wag/biasów w oparciu o szukanie najmniejszego błędu (wyprowadzenie na kartce)
 #  - zrobic liste aktualizowanyh neuronow z dostepem do ich wag i biasow
@@ -91,7 +90,7 @@ class NeuralNetwork:
                 num_of_neurons += 1
         return list_of_neurons_hid
 
-    # TODO - PRZEPATRZ W DEBUGGERZE
+    # TODO - PRZEPATRZ W DEBUGGERZE - ewidentnie cos sie nie zagadza
     def training_loop(self):
         # trening w oparciu o błąd
         curr_epoch = 0
@@ -129,17 +128,19 @@ class NeuralNetwork:
             current_error = 1 - self.check_results(self.hidden_layers)
 
             print("Czas trwania epochu: ", end_time - start_time)
-            print("Aktualny błąd: ", current_error)
+            print("Aktualny błąd: ", round(current_error, 2) * 100)
             curr_epoch += 1
 
     def check_results(self, layer):
-        total = []
+        counter = 0
         # layer values : list[list[int]]
         for label, neuron_output in zip(label_list, layer.values()):
+            # neuron generuje 89 wyjść dla jednego maila, zatem sumujemy je i dzielimy przez dlugosc layer.values() by otrzymac usrednienie wyniku
             avg_neuron_output = 1 if sum(neuron_output) / len(layer.values()) > 0.51 else 0
             if label == avg_neuron_output:
-                total.append(avg_neuron_output)
-        return sum(total) / len(total)
+                counter += 1
+
+        return counter / len(layer.values())
 
     def create_output_layer(self):
         pass

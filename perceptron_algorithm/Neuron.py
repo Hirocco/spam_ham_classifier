@@ -1,5 +1,16 @@
 import itertools
-# from feature_extraction.Vocabulary import vectorized_emails
+
+"""
+Neuron:
+---------
+ID : Int
+weight : float 
+bias : float 
+output : float
+mail_input : list[int]
+output : float 
+is_activated : boolean
+"""
 
 class Neuron:
     def __init__(self, id, weight, bias=0, output=None, mail_input=None, is_activated=None):
